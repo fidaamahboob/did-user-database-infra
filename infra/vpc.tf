@@ -9,22 +9,42 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public_subnet_1" {
   vpc_id            = aws_vpc.main.id
   map_public_ip_on_launch = true
-  cidr_block        = var.public_subnet_cidr
-  availability_zone = var.availability_zone
+  cidr_block        = var.public_subnet_cidr[0]
+  availability_zone = var.availability_zone_1
   tags = {
-    Name = "main-subnet"
+    Name = "main-subnet-az1"
    }
 }
 
-resource "aws_subnet" "private_subnet" {
+resource "aws_subnet" "public_subnet_2" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.private_subnet_cidr
-  availability_zone = var.availability_zone
+  map_public_ip_on_launch = true
+  cidr_block        = var.public_subnet_cidr[1]
+  availability_zone = var.availability_zone_2
   tags = {
-    Name = "private-subnet"
+    Name = "main-subnet-az2"
+   }
+}
+
+
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidr[0]
+  availability_zone = var.availability_zone_1
+  tags = {
+    Name = "private-subnet-az1"
+   }
+}
+
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidr[1]
+  availability_zone = var.availability_zone_2
+  tags = {
+    Name = "private-subnet-az2"
    }
 }
 
@@ -35,18 +55,13 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_internet_gateway_attachment" "vpc-igw-attachment" {
-  internet_gateway_id = aws_internet_gateway.igw.id
-  vpc_id              = aws_vpc.main.id
-}
-
 resource "aws_route_table" "subnet-route-table" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = var.public_subnet_cidr
-    gateway_id = aws_internet_gateway.igw.id
-  }
+  cidr_block = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.igw.id
+}
 
   tags = {
     Name = "subnet-route-table"
@@ -54,7 +69,12 @@ resource "aws_route_table" "subnet-route-table" {
 }
 
 resource "aws_route_table_association" "public_assoc" {
-  subnet_id      = aws_subnet.public_subnet.id
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.subnet-route-table.id
+}
+
+resource "aws_route_table_association" "public_assoc_2" {
+  subnet_id      = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.subnet-route-table.id
 }
 
@@ -67,7 +87,11 @@ resource "aws_route_table" "private-subnet-route-table" {
 }
 
 resource "aws_route_table_association" "private_assoc" {
-  subnet_id      = aws_subnet.private_subnet.id
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private-subnet-route-table.id
+}
+resource "aws_route_table_association" "private_assoc_2" {
+  subnet_id      = aws_subnet.private_subnet_2.id
   route_table_id = aws_route_table.private-subnet-route-table.id
 }
 
