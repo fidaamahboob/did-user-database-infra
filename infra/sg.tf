@@ -11,7 +11,7 @@ resource "aws_security_group" "lambda_sg" {
     from_port   = 3306                 # MySQL port
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = [aws_subnet.private_subnet.cidr_block]
+    cidr_blocks = [aws_subnet.private_subnet_1.cidr_block, aws_subnet.private_subnet_2.cidr_block]
     description = "Allow Lambda to reach RDS"
   }
 
@@ -69,7 +69,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [format("%s/32", var.ip_address)] 
+    cidr_blocks = ["0.0.0.0/0"] 
   }
 
   egress {
