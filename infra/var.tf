@@ -25,5 +25,4 @@ variable "main_vpc_cidr" {
 variable "ip_address" {
   description = "Your IP address for SSH access to the bastion host"
   type        = string
-  default     = "192.168.1.155"
 }
