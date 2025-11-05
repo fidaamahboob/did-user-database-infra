@@ -25,10 +25,8 @@ def lambda_handler(event, context):
         user_list = [
             {
                 "id": u.id,
-                "username": u.username,
-                "email": u.email,
-                "display_name": u.display_name,
-                "entra_did": u.entra_did,
+                "first_name": u.first_name,
+                "last_name": u.last_name,
                 "date_of_birth": u.date_of_birth.isoformat() if u.date_of_birth else None,
                 "is_active": u.is_active
             }
