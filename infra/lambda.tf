@@ -66,9 +66,10 @@ resource "aws_lambda_function" "data_lambda" {
   environment {
     variables = {
       DB_HOST = aws_db_instance.mydb.address
-      DB_USER = "admin"
-      DB_PASS = "StrongPassword123!"
+      DB_USERNAME = "admin"
+      DB_PASSWORD = "StrongPassword123!"
       DB_NAME = "mysql"
+      DB_PORT = "3306"
     }
   }
 

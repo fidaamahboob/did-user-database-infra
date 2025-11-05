@@ -1,27 +1,52 @@
+import os
 import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import User
+
+# DB connection string
+DB_USER = os.environ['DB_USER']
+DB_PASSWORD = os.environ['DB_PASSWORD']
+DB_HOST = os.environ['DB_HOST']
+DB_NAME = os.environ['DB_NAME']
+DB_PORT = os.environ.get('DB_PORT', 3306)
+
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+# Create SQLAlchemy engine and session
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
 
 def lambda_handler(event, context):
+    session = SessionLocal()
     try:
-        # Parse the input event
-        print("Received event:", json.dumps(event))
-        
-        # Add your business logic here
-        
-        # Prepare the response
-        response = {
-            'statusCode': 200,
-            'body': json.dumps({
-                'message': 'Successfully executed'
-            })
-        }
-        
-        return response
-        
-    except Exception as e:
-        print(f"Error: {str(e)}")
+        # Query all users
+        users = session.query(User).all()
+        user_list = [
+            {
+                "id": u.id,
+                "username": u.username,
+                "email": u.email,
+                "display_name": u.display_name,
+                "entra_did": u.entra_did,
+                "date_of_birth": u.date_of_birth.isoformat() if u.date_of_birth else None,
+                "is_active": u.is_active
+            }
+            for u in users
+        ]
+
         return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': str(e)
-            })
+            "statusCode": 200,
+            "body": json.dumps(user_list),
+            "headers": {"Content-Type": "application/json"}
         }
+
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    finally:
+        session.close()
