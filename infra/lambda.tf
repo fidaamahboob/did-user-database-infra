@@ -52,7 +52,7 @@ data "archive_file" "lambda_zip" {
 resource "aws_lambda_function" "data_lambda" {
   function_name = "data_lambda"
   role          = aws_iam_role.lambda_exec_role.arn
-  handler       = "function.handler"
+  handler       = "function.lambda_handler"
   runtime       = "python3.9"
 
   filename         = data.archive_file.lambda_zip.output_path
@@ -65,11 +65,11 @@ resource "aws_lambda_function" "data_lambda" {
 
   environment {
     variables = {
-      DB_HOST = aws_db_instance.mydb.address
-      DB_USER = "admin"
+      DB_HOST     = aws_db_instance.mydb.address
+      DB_USER     = "admin"
       DB_PASSWORD = "StrongPassword123!"
-      DB_NAME = "user_data"
-      DB_PORT = "3306"
+      DB_NAME     = "user_data"
+      DB_PORT     = "3306"
     }
   }
 
