@@ -68,7 +68,7 @@ resource "aws_lambda_function" "data_lambda" {
       DB_HOST = aws_db_instance.mydb.address
       DB_USERNAME = "admin"
       DB_PASSWORD = "StrongPassword123!"
-      DB_NAME = "mysql"
+      DB_NAME = "user_data"
       DB_PORT = "3306"
     }
   }
