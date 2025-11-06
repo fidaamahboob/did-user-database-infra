@@ -8,7 +8,7 @@ resource "aws_security_group" "lambda_sg" {
 
   # Egress: only allow outbound to private subnets (where RDS lives)
   egress {
-    from_port   = 3306                 # MySQL port
+    from_port   = 3306 # MySQL port
     to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = [aws_subnet.private_subnet_1.cidr_block, aws_subnet.private_subnet_2.cidr_block]
@@ -69,7 +69,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] 
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
